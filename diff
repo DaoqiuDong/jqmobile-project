@@ -1,0 +1,154 @@
+Index: cgi-bin/set_router_ctl_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/add_network_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_autoplay.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_defaultmode_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/get_my_ip.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_EQ.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/htmlsetting_snapshot.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_resolution_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/upload.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/delete_password_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_lan_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/windir.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/rs232cmd.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/get_my_mac.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/upload1.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/user_password_post.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/user_get_cookie.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/upload2.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/factory_test.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/upload3.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/password_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/conference_control.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/upload4.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/wifi_info_GET.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_devicename.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/dir.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_wifi_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_music_output_POST.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/pushdongleinfo.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_devicename_reboot.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: cgi-bin/set_hotspot_ap.cgi
+===================================================================
+Cannot display: file marked as a binary type.
+svn:mime-type = application/octet-stream
+Index: js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css
+===================================================================
+--- js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css	(revision 347)
++++ js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css	(working copy)
+@@ -4714,3 +4714,12 @@
+ 	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
+ 	padding: .2em;
+ }
++#Plug-in-popup{width:98%;margin:0 auto;}
++#plug-in-main{background:rgba(246,246,246,0.7);width:100%;margin:0 auto;border-radius:;}
++#plug-in-main table{border-spacing: 0;width:100%;border-collapse: collapse;}
++.plug-in_list {height:60px;border-bottom:1px solid#fff;}
++.plug-in_list:last-child{border:0;}
++.plug-in_list:hover{background:rgba(246,246,246,1);}
++.plug-in_name{padding:0 1%;}
++.del{padding-left:1%;}
++
+Index: websetting.html
+===================================================================
+--- websetting.html	(revision 339)
++++ websetting.html	(working copy)
+@@ -327,6 +327,8 @@
+ 	
+ 	<li id="upgrade"><a href="#"><img src="img/upgrade_ico.png" alt="Password" class="ui-li-icon"><h1 id="upgrade_txt">OTA upgrade</h1><span class="ui-li-count" id="new_version"></span></a></li>
+ 	<li id="channel_set"><a href="#Channel" data-rel="popup"  data-position-to="window"><img src="img/wifi_channel.png" alt="Channel" class="ui-li-icon"><h1 id="channel_show_txt">Wifi Channel</h1></a></li>
++	<li id="vpn_set"><a href="VPN_setting.html"target="-blank"><img src="img/vpn.png" alt="VPN" class="ui-li-icon"><h1 id="vpn_txt">VPN</h1><span class="ui-li-count" id="channel_txt"></span></a></li>
++	<li id="plug_set"><a href="plug-in.html"target="-blank"><img src="img/plug-in.png" alt="Plug-in" class="ui-li-icon"><h1 id="plug-i_txt">Plug-in</h1><span class="ui-li-count" id="channel_txt"></span></a></li>
+ 
+ 	<!--<li id="router_only_sel"><a href="#router_only_set"  data-rel="popup"  data-position-to="window"><img src="img/router_only.png" alt="router_only" class="ui-li-icon"><h1 id="routeronly_txt">Via Router Only</h1><span class="ui-li-count" id="router_only_txt"></span></a></li>
+ 	-->

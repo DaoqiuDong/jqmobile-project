@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>plugin-list</title>
+	<link rel="stylesheet" href="js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+	<script src="js/jquery/jquery-1.8.3.min.js"></script>
+	<style type="text/css">
+        *{margin:0;padding:0;}
+        body{background:#eee;}
+        #plugin_list{width:98%;margin:0 auto;border-collapse:collapse;min-width:800px;}
+        #plugin_list tbody tr{height:80px;border-bottom:1px solid#ddd;}
+        #plugin_list tbody tr td:last-child{text-align: center;font-weight: 700;}
+        .plugin_name{padding-left:1%;font-size:20px;font-weight:700;font-size: 18px;width:90%;}
+        .plugindescribe{color:#555;font-size:16px;}
+        #plugin_list button{margin:0;height:42px;width:50%;cursor:pointer;}
+	</style>
+	<script>
+        $(function(){ 
+	        $.ajax({  
+	             url: 'cgi-bin/plugin-manager.cgi?cmd=list-all',  
+	             type: 'post',  
+	             dataType: 'text',            
+	             success:succFunction,//ajax请求成功执行方法   
+	             error:function(){
+	             	// $.ajax({
+	             	//  url: 'cgi-bin/plugin-manager.cgi?cmd=list-all',  
+		             // type: 'post',  
+		             // dataType: 'text',  
+		             // cache:false,	             
+		             // success:succFunction,
+	              //   });
+	                alert("error!");
+	            } 
+	        });    // 主界面ajax请求结束!
+            
+            
+
+	        // $("#submit").click(function(){
+	        // 	var searchval=$("")
+	        // 	if(!){
+
+	        // 	}
+         //        $.ajax({
+         //        	url:'cgi-bin/plugin_manager.cgi',
+         //        	type:'post',
+         //        	datatype:'text',
+         //        	success:searchFunction
+         //        });
+         //    });//搜索ajax事件
+
+	        function succFunction(data){
+				            var jsonData=eval("("+data+")");
+				            var web="";
+				            var b="";
+				            for(var i=0;i<jsonData.length;i++){
+					             var id = jsonData[i].id;
+					             var version = jsonData[i].version;
+					             var pluginname = jsonData[i].name;
+					             var describe = jsonData[i].description;
+					             var url = jsonData[i].url;
+					             var html= "" 
+					                 html+= "<tr id="+id+"><td class='plugin_name'>"+pluginname+"("+version+")<br><span class='plugindescribe'>"+describe+"<span></td>";
+					                 html+= "<td><button class='install'>install</button><input type='hidden'name='url'value="+url+"></td></tr>";				                   
+					            $("#plugin_list").prepend(html);					            					            
+                            } ;//for循环
+
+                            $.ajax({  
+					             url: "cgi-bin/plugin-manager.cgi?cmd=list",  
+					             type: "post",  
+					             dataType: "text",   
+					             cache: false,    
+					             success:function(list){
+					             	var jsonlist = eval("("+list+")");
+					             	for(var j=0;j<jsonlist.length;j++){
+					             	var inid="#"+jsonlist[j].id;
+					             	     web=jsonlist[j].web;
+					             	$(inid).find("button").removeClass("install").addClass("delete").text("delete");
+					             	// $(inid).children("td:last").text("Installed");
+					             	};				             	 
+					             }//ajax请求成功执行方法名称    
+						    });
+						    $("#plugin_list").on("click",".delete",function(){
+                                 var delid=$(this).parents("tr").attr("id");
+                                 b=$(this).parents("tr").index();
+                                 // $(this).removeClass("delete").addClass("install").text("install");
+                                 $.post("cgi-bin/plugin-manager.cgi?cmd=delete-plugin&id="+delid,deleteplugin);
+						    });
+						    function deleteplugin(){
+                                  $("#plugin_list").find("button").eq(b).removeClass("delete").addClass("install").text("install");
+						    };
+                            $("#plugin_list").on("click",".install",function(){
+                            	$(this).text("installing").removeClass("install").addClass("delete");
+                            	var j=$(this).parents("tr").index();
+                            	var web2="www";
+                        	    var url=$(this).siblings("input").val();
+                        	    $.ajax({
+                        	    	type:"POST",
+                        	    	url:"cgi-bin/plugin-manager.cgi?cmd=add-plugin&url="+url,
+                        	    	// dataType:"text",
+                        	    	// timeout:10000,
+                        	    	success:function(){$("#plugin_list").find("button").eq(j).text("delete");},
+                        	    	error:function(data){$("#plugin_list").find("button").eq(j).children("td:last").text("error");}
+                        	    });
+                                
+				            	// $.post("cgi-bin/plugin-manager.cgi?cmd=add-plugin&url="+url,alert(data));
+				            	// window.backstatus=function(){
+				            	// 	$.ajax({
+			            		// 		    type:"post",
+						           //  		url:"cgi-bin/plugin-manager.cgi?cmd=get-status",
+						           //  		dataType:"text",
+						           //  		cache:false,
+						           //  		success:function(data){
+						           //  			status = data;
+						           //  			if(status=="finished"||status=="failure"){
+                 //                                      clearInterval(t);
+						           //  			}
+						           //  		},
+            	    //                        });
+				            	// 	$("#plugin_list").find("button").eq(j).text(data);
+				            	// };	
+				            	// $.ajax({
+			            		// 		    type:"post",
+						           //  		url:"cgi-bin/plugin-manager.cgi?cmd=get-status",
+						           //  		dataType:"text",
+						           //  		cache:false,
+						           //  		success:function(data){
+						           //  			status = data;
+						           //  			if(status=="finished"||status=="failure"){
+                 //                                      clearInterval(t);
+						           //  			}
+						           //  		},
+            	    //                        });
+				            	// 	$("#plugin_list").find("button").eq(j).text("installing");			            	
+				            });
+
+            };
+
+        }); 
+	</script>
+</head>
+<body>
+	<div id="plug_sel" style="display:block;"data-role="page">
+		<div data-role="header"style="background:#ddd;"data-position="inline">
+			        <!-- <div id="search">
+			        		<input type="text"required="required"id="search_plugin_name"placeholder="search plugins">
+			        		<button id="submit"type="button"><img src="img/search.png" height="30"></button>
+			        </div> -->
+			        <a href="websetting.html" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-right"></a>
+				    <h2 style="text-align:center;margin:0;line-height:54px;">Plugin list</h2>
+				</div>
+		<div id="plugin_main"data-role="content">
+			<table id="plugin_list">
+				
+			</table>
+		</div>
+    </div>
+</body>
+</html>

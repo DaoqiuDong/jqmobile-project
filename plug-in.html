@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>plgu-in</title>
+	<style type="text/css">
+	    *{margin:0;padding:0;}
+	    body{background:#eee;}
+        .close{float:right;margin:6px 3%;}
+        #plug-in-main table{margin:0 auto;border-collapse: collapse;}
+        .plug-in_name{height:80px;border-bottom:1px solid#bbb;}
+        .plug-in_name button{margin:0;height:42px;width:80%;cursor:pointer;}
+        .plug-in_name td:first-child{padding-left:1%;font-size:20px;font-weight:700;font-size: 18px;width:80%; }
+        .plugindescribe{color:#555;font-size:16px;}
+        .plug-in-list{margin:0 auto;width:98%;height:80px;font-size:22px;font-weight:700;}
+        .plug-in-list a{display:block;height:60px;width:16%;margin:0 auto;text-align:center;line-height:60px;}
+	</style>
+	<link rel="stylesheet" href="js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+	<script src="js/jquery/jquery-1.8.3.min.js"></script>
+	<script>
+        $(function(){ 
+            // function mainajax(){
+		        $.ajax({  
+		             url: "cgi-bin/plugin-manager.cgi?cmd=list",  
+		             type: "post",  
+		             // data:{"cmd":"list"},
+		             dataType: "text",   
+		             cache: false,    
+		             success: succFunction//ajax请求成功执行方法名称    
+		        }) ;   // 主界面ajax请求结束!
+		        function succFunction(data){
+					            var jsonData=eval("("+data+")");
+					            for(var i=0;i<jsonData.length;i++){
+						             var id = jsonData[i].id;
+						             var pluginname = jsonData[i].name;
+						             var version = jsonData[i].version;
+						             var describe = jsonData[i].description;
+						             var enable = jsonData[i].enable;
+						             var web = jsonData[i].web;
+						             var html=""
+						                 html+="<tr id='"+id+"' class='plug-in_name'><td>"+pluginname+"("+version+")<br><span class='plugindescribe'>"+describe+"<span></td>";
+						                 html += "<td width='6%'><a href="+web+"><button class='options'data-inline='true'data-corners='false'data-theme='b'>Options</button></a></td>";
+						                 // html += "<td width='6%'><button class="+enable+">"+enable+"</button></td>";
+						                 html += "<td width='6%'><button class='del'data-inline='true'data-corners='false'data-theme='b'>Delete</button></td></tr>";				                   
+						            $("#plug-in_table").prepend(html);
+						            
+						            $(".del").click(function(){
+						            	var DelID = $(this).parents("tr").attr("id");
+						            	$.post("cgi-bin/plugin-manager.cgi?cmd=delete-plugin&id="+DelID);
+			        	                $(this).parents("tr").remove();		        	                
+		                            }); //删除执行方法
+		                            
+	                            }; //for循环
+	                     };//ajax请求成功执行方法名称 
+	               //      $("#plug-in_table").on("click",".disable",function(){
+             	  //           $(this).removeClass("disable").addClass("enable").text("enable");	
+                //             var DisableID = $(this).parents("tr").attr("id");
+			            	// $.post("cgi-bin/plugin-manager.cgi?cmd=disable&id="+DisableID);
+                //         });//禁用执行方法
+                //         $("#plug-in_table").on("click",".enable",function(){
+                //         	    $(this).removeClass("enable").addClass("disable").text("disable");
+                //             	var OpenID = $(this).parents("tr").attr("id");
+				            // 	$.post("cgi-bin/plugin-manager.cgi?cmd=enable&id="+OpenID); 	
+                //         });//启用执行方法
+        }); 
+	</script>
+</head>
+<body>
+	<div id="plug_sel" style="display:block;"data-role="page">
+			<div data-role="header"style="background:#ddd;" data-position="inline">
+				<a href="websetting.html" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-right"></a>
+			    <h2 style="text-align:center;margin:0;line-height:54px;">Plug-in</h2>
+			</div>
+			<div data-role="content"id="plug-in-main">
+				<table width="98%"id="plug-in_table"></table>
+				<div class="plug-in-list"><a href="plug-in-list.html">Add more plug-in</a></div>
+			</div>
+	</div>
+	
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>VPN</title>
+	<style type="text/css">
+        *{margin:0;padding:0;}
+        body{background:#eee;}
+        #vpn-main{margin:0 auto;width:98%;min-width:600px;}
+        #vpndata{padding-left:1%;}
+        .form>span{width:20%;display:inline-block;line-height:42px;font-size:20px;overflow: hidden;vertical-align:middle;}
+        .form select{height:30px;width:16%;font-size:16px;}
+        .form>input{height:30px;width:76%;font-size:16px;}
+        #use_mppe input{width:36px;height:22px;vertical-align:middle;}
+        #use_mppe span{width:20%;display:inline-block;line-height:42px;font-size:18px;}
+        #autostartcheck{width:36px;height:20px;vertical-align:middle;}
+        .connectchoose{width:80%;display:inline-block;font-size:18px;line-height:36px;}
+        .connectchoose div:last-child{width:20%;display:inline-block;font-size:18px;cursor: pointer;line-height:36px;text-align: center;margin:0;}
+        .status{color:#666;width:40%;display:inline-block;font-size:18px;text-align: center;}
+        #save{height:46px;width:20%;font-size:16px;margin:2% 40%;border:0;background:#4876ff;color:#fff;font-size:18px;cursor: pointer;}
+	</style>
+    <link rel="stylesheet" href="js/jquery.mobile-1.4.5/jquery.mobile-1.4.5.css">
+    <script  src="js/jquery/jquery-1.8.3.min.js"></script>
+	<script>
+        $(function(){
+            var t="";
+            $.ajax({
+                url:"cgi-bin/vpn.cgi?cmd=getconf",
+                type:"post",
+                datatype:"text",
+                cache:false,
+                success:function(data){
+                    if(data=="500"){}   
+                        else{
+                            $("#save").css("background","#b3b3b3");
+                            $("#vpndata").on("change",":input",function(){$("#save").css("background","#4876ff").on("click");});
+                            var jsonData=eval("("+data+")");
+                            var username=jsonData.username;
+                            var password=jsonData.password;
+                            var host=jsonData.host;
+                            var use_encrypt=jsonData.use_mppe;
+                            var autostart=jsonData.autostart;
+                            var protocol=jsonData.protocol;
+                            $("#username").val(username);
+                            $(":password").val(password);
+                            $("#host").val(host);
+                            if(use_encrypt===false){
+                                $("#no-encrypt").attr("checked","checked");
+                                $("#encrypt").removeAttr("checked","checked");
+                            }else{
+                                $("#encrypt").attr("checked","checked");
+                                $("#no-encrypt").removeAttr("checked","checked");
+                            };
+                            if(autostart===true){
+                                $("#autostartcheck").attr("checked","checked");
+                                $.ajax({
+                                        url:"cgi-bin/vpn.cgi?cmd=connect",
+                                        type:"post",
+                                        datatype:"text",
+                                        success:function(){$.post("cgi-bin/vpn.cgi?cmd=get-status",statustime);},
+                                        error:function(){$(".status").text("connect fail")}
+                                });//获取连接状态
+                                function getstatus(){
+                                    $.post("cgi-bin/vpn.cgi?cmd=get-status",statustime);
+                                };
+                                function statustime(data){
+                                   t=setTimeout(getstatus,2000);
+                                   if(data==500){$(".status").text("connect error");t="";}
+                                    else if(data=="disconnect"){t="";$(".status").text("disconnect")} 
+                                     else if(data=="connecting"||data=="connected"||data=="failure")
+                                        {$(".setconf").text("kill").removeClass("setconf").addClass("kill");$(".status").text(data);}
+                                      else{$(".status").text("The server returns an error")}         
+                                };
+                            }else{
+                                $("#autostartcheck").removeAttr("checked","checked");
+                            };
+                            if(protocol="pptp"){
+                                $("#pptp").attr("selected","selected");
+                                $("#l2tp").removeAttr("selected","selected");
+                            }else{
+                                $("#l2tp").attr("selected","selected");
+                                $("#pptp").removeAttr("selected","selected");
+                            }; 
+                        }
+                },//请求成功执行方法
+                   
+                error:function(){
+                    $("#encrypt").attr("checked","checked");
+                    $("#autostartcheck").attr("checked","checked");
+                    $("#pptp").attr("selected","selected");
+                }//请求失败执行方法
+                
+            });//ajax请求配置信息
+
+
+            $(".connectchoose").on("click",".setconf",function(){   
+                var host=$("#host").val();
+                var name=$("#username").val();
+                var pwd=$(":password").val();
+                if(host==="")
+                    {alert("Please fill in valid server address")}
+                else if(name==="")
+                    {alert("Please fill in the user name")}
+                else if(pwd==="")
+                    {alert("Please fill in the password")}
+                else{
+                    if($("#autostartcheck").is(":checked")){$("#autostartval").val("true")}else{$("#autostartval").val("false")};
+                    $.ajax({
+                        cache: true,
+                        type: "post",
+                        url:"cgi-bin/vpn.cgi?cmd=setconf",
+                        data:$("#vpndata").serialize(),
+                        // timeout:50000,
+                        // async: false,
+                        // error:function(){$("#save").val("save fail");},
+                        success:function(backdata){
+                                    if(backdata=="200"){
+                                            $.ajax({
+                                                url:"cgi-bin/vpn.cgi?cmd=connect",
+                                                type:"post",
+                                                datatype:"text",
+                                                success:function(){$.post("cgi-bin/vpn.cgi?cmd=get-status",statustime);},
+                                                error:function(){$(".status").text("connect fail")}
+                                            });//获取连接状态
+                                            function getstatus(){
+                                                $.post("cgi-bin/vpn.cgi?cmd=get-status",statustime);
+                                            };
+                                            function statustime(data){
+                                               t=setTimeout(getstatus,2000);
+                                               if(data==500){$(".status").text("connect error");t="";}
+                                                else if(data=="disconnect"){t="";$(".status").text("disconnect")} 
+                                                 else if(data=="connecting"||data=="connected"||data=="failure")
+                                                    {$(".setconf").text("kill").removeClass("setconf").addClass("kill");$(".status").text(data);}
+                                                  else{$(".status").text("The server returns an error");}         
+                                            }; 
+                                    }else{
+                                        $("#save").val("save fail")
+                                    }
+                        }         
+                    });
+                       
+                }
+                
+            });//连接vpn事件
+
+            $(".connectchoose").on("click",".kill",function(){
+                $(".kill").removeClass("kill").addClass("setconf");
+                $.post("cgi-bin/vpn.cgi?cmd=disconnect",disconnect);
+                function disconnect(data){
+                    if(data=="202"){$(".status").text("disconnect the error");}
+                    else{$(".setconf").text("connect");$(".status").text("not connected");clearTimeout(t);}
+                };
+            });//断开vpn连接事件
+
+            $("#save").click(function(){
+                var host=$("#host").val();
+                var name=$("#username").val();
+                var pwd=$(":password").val();
+                if(host==="")
+                    {alert("Please fill in valid server address")}
+                else if(name==="")
+                    {alert("Please fill in the user name")}
+                else if(pwd==="")
+                    {alert("Please fill in the password")}
+                else{
+                    if($("#autostartcheck").is(":checked")){$("#autostartval").val("true")}else{$("#autostartval").val("false")};
+                    $.ajax({
+                        cache: true,
+                        type: "post",
+                        url:"cgi-bin/vpn.cgi?cmd=setconf",
+                        data:$("#vpndata").serialize(),
+                        // timeout:50000,
+                        // async: false,
+                        // error:function(){$("#save").val("save fail");},
+                        success:function(backdata){if(backdata=="200"){$("#save").val("save success")}else{$("#save").val("save fail")}} 
+                    });
+                };
+            });//保存vpn配置事件
+        })
+	</script>
+</head>
+<body>
+	<div id="vpn_sel" style="display:block;" data-role="page">
+			<div data-role="header" style="background:#ddd;" data-position="inline">
+				<a href="plug-in.html" class="ui-btn ui-corner-all ui-icon-back ui-btn-icon-notext ui-btn-right"></a>
+			    <h2 style="text-align:center;margin:0;line-height:54px;">VPN</h2>
+			</div>
+			<div data-role="content" id="vpn-main">
+				<form method="post" id="vpndata" target="myiframe">
+                    <div  data-role="fieldcontain" class="form">
+    					<span>Type</span><select name="protocol">
+    						    <option value="pptp" id="pptp" selected="selected">PPTP</option>
+    						    <!-- <option value="l2tp"id="l2tp">L2TP</option> -->
+    					    </select><br/>
+    					<span>Server address</span><input type="text" name="host" required="required"id="host"><br/>
+                        <span>User</span><input type="text" name="username" required="required" id="username"><br/>
+                        <span>Password</span><input type="password" name="password" required="required"><br/>
+                        <div id="use_mppe"><span>Encrypt</span>
+                        	<input type="radio" name="use_mppe" value="true" id="encrypt" checked="checked"><span>encrypt</span>
+                            <input type="radio" name="use_mppe" value="false" id="no-encrypt"><span>no encrypt</span>
+                        </div>
+                        <span>Powered up</span><input type="checkbox"  id="autostartcheck">
+                        <input type="hidden" name="autostart" id="autostartval">
+                        <label for="autostart">Powered up</label><br>
+                        <span>State</span><div class="connectchoose"><div class="status">not connected</div><div class="setconf" style="color:blue;">connect</div></div>
+                        <div><input type="submit" value="save" id="save"></div>
+                    </div>
+				</form>
+                <iframe name="myiframe" width=0 height=0 ></iframe>
+			</div>
+	</div>
+</body>
+</html>
